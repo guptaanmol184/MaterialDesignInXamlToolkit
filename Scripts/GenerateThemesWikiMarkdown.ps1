@@ -128,6 +128,9 @@ Function New-Style {
 Function Add-Style {
     Param ($targetType, $styleName, $fileName)
     $temp = Get-Style -targetType $targetType -styleName $styleName -fileName $file
+    Write-Debug "[My Custom] MaterialDesignTheme.$file.xaml x:Key=$styleName"
+    $fullFilePath = Join-Path $themesFullDir "MaterialDesignTheme.$file.xaml"
+    Write-Debug "[My Custom] $fullFilePath"
     $discoverdStyles.Add($temp) | Out-Null
 }
 
