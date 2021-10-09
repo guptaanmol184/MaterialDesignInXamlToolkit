@@ -131,6 +131,10 @@ Function Add-Style {
     Write-Debug "[My Custom] MaterialDesignTheme.$file.xaml x:Key=$styleName"
     $fullFilePath = Join-Path $themesFullDir "MaterialDesignTheme.$file.xaml"
     Write-Debug "[My Custom] $fullFilePath"
+    $pattern = "x:Key=`"$styleName`""
+    $lineNumber = Select-String -Path $fullFilePath -Pattern $pattern | Select-Object LineNumber
+    Write-Debug "This is line number: $lineNumber"
+
     $discoverdStyles.Add($temp) | Out-Null
 }
 
