@@ -33,7 +33,7 @@ Function Format-Output {
         }
         $previousFile = $style.File;
         
-        $linkAndStyleName = "[$($style.Style)]($($baseURL)/$($latestHash)/" +
+        $linkAndStyleName = "[$(if($style.Style) {$style.Style} Else {$style.Control})]($($baseURL)/$($latestHash)/" +
                             "$($filePathURL)/MaterialDesignTheme.$($style.File).xaml#L$($style.LineNumber))";
         if ($style.IsDefault) {
             Write-OutputFile ("$listMarkdown $($linkAndStyleName) $defaultStyleText" -replace '\s+', ' ')
@@ -127,12 +127,6 @@ Function New-Style {
 
 Function Add-Style {
     Param ($targetType, $styleName, $fileName)
-    Write-Debug "[My Custom] MaterialDesignTheme.$file.xaml x:Key=$styleName"
-    $fullFilePath = Join-Path $themesFullDir "MaterialDesignTheme.$file.xaml"
-    Write-Debug "[My Custom] $fullFilePath"
-    $pattern = "x:Key=`"$styleName`""
-    $lineNumber = Select-String -Path $fullFilePath -Pattern $pattern | Select-Object -ExpandProperty LineNumber
-    Write-Debug "This is line number: $lineNumber"
     $temp = Get-Style -targetType $targetType -styleName $styleName -fileName $file -lineNumber $lineNumber
 
     $discoverdStyles.Add($temp) | Out-Null
@@ -145,7 +139,14 @@ Function Get-Style {
     $temp.Style = $styleName
     $temp.IsDefault = !$styleName
     $temp.File = $fileName
-    $temp.LineNumber = $lineNumber
+
+    if ($styleName) {
+        $fullFilePath = Join-Path $themesFullDir "MaterialDesignTheme.$fileName.xaml"
+        $pattern = "x:Key=`"$styleName`""
+        $lineNumber = Select-String -Path $fullFilePath -Pattern $pattern | Select-Object -ExpandProperty LineNumber
+        $temp.LineNumber = $lineNumber
+    }
+
     return $temp
 }
 
